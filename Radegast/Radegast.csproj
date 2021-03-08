@@ -1,6 +1,6 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <OutputType>WinExe</OutputType>
+    <OutputType>Exe</OutputType>
     <TargetFramework>net471</TargetFramework>
     <PublishUrl>publish\</PublishUrl>
     <Install>true</Install>
@@ -81,6 +81,9 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
     <OutputPath>..\bin\$(Configuration)\</OutputPath>
   </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="C5" Version="2.5.3" />
     <PackageReference Include="CommandLineParser" Version="2.8.0" />
@@ -152,6 +155,11 @@
     </Compile>
     <Compile Update="Core\Types\MapControl.cs">
       <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Update="Properties\Settings.Designer.cs">
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Settings.settings</DependentUpon>
     </Compile>
     <EmbeddedResource Update="Core\Types\MapControl.resx">
       <DependentUpon>MapControl.cs</DependentUpon>
@@ -457,9 +465,7 @@
       <DependentUpon>LoginConsole.cs</DependentUpon>
       <SubType>Dependency</SubType>
     </Compile>
-    <Compile Update="GUI\Consoles\LoginConsole.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
+    <Compile Update="GUI\Consoles\LoginConsole.cs" />
     <EmbeddedResource Update="GUI\Consoles\LoginConsole.resx">
       <DependentUpon>LoginConsole.cs</DependentUpon>
       <SubType>DesignerType</SubType>
@@ -2242,6 +2248,12 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\LSLTools\LSLTools.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Update="Properties\Settings.settings">
+      <Generator>SettingsSingleFileGenerator</Generator>
+      <LastGenOutput>Settings.Designer.cs</LastGenOutput>
+    </None>
   </ItemGroup>
   <Target Name="PostBuild" AfterTargets="PostBuildEvent">
     <Exec Command="xcopy /y &quot;$(ProjectDir)assemblies&quot; &quot;$(OutDir)&quot;" />

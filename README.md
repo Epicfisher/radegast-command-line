@@ -1,14 +1,8 @@
-```
-______          _                      _   
-| ___ \        | |                    | |  
-| |_/ /__ _  __| | ___  __ _  __ _ ___| |_ 
-|    // _` |/ _` |/ _ \/ _` |/ _` / __| __|
-| |\ \ (_| | (_| |  __/ (_| | (_| \__ \ |_ 
-\_| \_\__,_|\__,_|\___|\__, |\__,_|___/\__|
-                        __/ |              
-                       |___/ 
-```
-Radegast Metaverse Client (http://radegast.life/)
+# Radegast Command-Line
+
+A Modified Radegast Metaverse Client to Run Entirely within the Command-line, as opposed to a Winforms GUI. Optimal for Lightweight Linux Servers. Based on Radegast 2.33. Not everything works perfectly.
+
+Radegast is a virtual world client compatible with Second Life and OpenSimulator. http://radegast.life/
 
 [![License: LGPL v3](https://img.shields.io/badge/License-LGPL%20v3-blue.svg)](https://www.gnu.org/licenses/lgpl-3.0)
 
@@ -16,25 +10,71 @@ Radegast Metaverse Client (http://radegast.life/)
 
 [![Codacy Badge](https://api.codacy.com/project/badge/Grade/98684cbe995245f7ad1781cf254a742c)](https://www.codacy.com/manual/cinderblocks/radegast?utm_content=cinderblocks/radegast)
 
-## Getting started
+## Features
 
-Radegast is a virtual world client compatible with Second Life and OpenSimulator.
+```
+* Log In to a Grid
+* Fully Render your Avatar (No Bake-Fail Cloud Particles)
+* Runs Entirely within a Console
+```
 
-### Prerequisites
+## Missing Features
 
-Radegast requires .NET Framework 4.7.2 or compatible Mono version to build and run.
+```
+Empty List as of Now
+```
 
-### Contributing
+## Setup
 
-Pull requests are nice.
+### Windows
+
+Radegast requires .NET Framework 4.7.2
+
+### Linux
+
+Radegast requires at least Mono Version 5.12.x to run, though 6.x is Preferred
+
+## Usage
+
+The Program can be Started through the Command-line with the following Arguments:
+
+### Windows
+
+`Radegast.exe --username "<Username> <Lastname>" --password <Password> --no-sound --autologin`
+
+### Linux
+
+`mono Radegast.exe --username "<Username> <Lastname>" --password <Password> --no-sound --autologin`
+
+```
+<Username> = Your Account's Username
+<Lastname> = Your Account's Last Name. For most people this will be "Resident"
+<Password> = Your Account's Password
+```
+
+Additional Optional Command-line Arguments:
+
+```
+--ignore-warn = Ignores Warning Messages.
+
+--disable-lookat = Disables Lookat.
+--auto-reconnect = Enables Auto Reconnect.
+
+--south = Always Face South. Can be Useful for Bots
+--autogroundsit = Automatically GroundSit on Login
+```
+
+## Contributing
+
+Pull requests are nice
 
 ## Authors
 
-### Project founder:
+### Project Founder:
 
 * **Latif Khalifa**
 
-### Current maintainer and lead developer:
+### Current Maintainer and Lead Developer:
 
 * **Cinder Roxley** (email cinder cinderblocks.biz)
 
@@ -49,6 +89,10 @@ Pull requests are nice.
 * **Mojito Sorbet**
 * **Robin Cornelius**
 * **Revolution Smythe**
+
+### Command-Line Modifications:
+
+* **Epicfisher**
 
 ## License
 

@@ -42,7 +42,7 @@ namespace Radegast
         bool AutoResponseSent = false;
         ArrayList textBuffer;
 
-        public static Dictionary<string, Settings.FontSetting> fontSettings = new Dictionary<string, Settings.FontSetting>();
+        //public static Dictionary<string, Settings.FontSetting> fontSettings = new Dictionary<string, Settings.FontSetting>();
 
         public IMTextManager(RadegastInstance instance, ITextPrinter textPrinter, IMTextManagerType type, UUID sessionID, string sessionName)
         {
@@ -72,7 +72,7 @@ namespace Radegast
             {
                 try
                 {
-                    s["chat_fonts"] = serializer.Serialize(Settings.DefaultFontSettings);
+                    //s["chat_fonts"] = serializer.Serialize(Settings.DefaultFontSettings);
                 }
                 catch (Exception ex)
                 {
@@ -82,7 +82,7 @@ namespace Radegast
 
             try
             {
-                fontSettings = serializer.Deserialize<Dictionary<string, Settings.FontSetting>>(s["chat_fonts"]);
+                //fontSettings = serializer.Deserialize<Dictionary<string, Settings.FontSetting>>(s["chat_fonts"]);
             }
             catch (Exception ex)
             {
@@ -106,7 +106,7 @@ namespace Radegast
                 try
                 {
                     var serializer = new JavaScriptSerializer();
-                    fontSettings = serializer.Deserialize<Dictionary<string, Settings.FontSetting>>(e.Value);
+                    //fontSettings = serializer.Deserialize<Dictionary<string, Settings.FontSetting>>(e.Value);
                 }
                 catch (Exception ex)
                 {
@@ -168,6 +168,7 @@ namespace Radegast
         private void ProcessIncomingIM(InstantMessageEventArgs e, bool isNewMessage)
         {
             string msg = e.IM.Message;
+            Console.WriteLine("IM Received: " + msg + "\nFrom:" + e.IM.FromAgentName);
 
             if (instance.RLV.RestictionActive("recvim", e.IM.FromAgentID.ToString()))
             {
@@ -233,6 +234,7 @@ namespace Radegast
 
             if (ShowTimestamps)
             {
+                /*
                 if(fontSettings.ContainsKey("Timestamp"))
                 {
                     var fontSetting = fontSettings["Timestamp"];
@@ -248,8 +250,10 @@ namespace Radegast
                     TextPrinter.Font = Settings.FontSetting.DefaultFont;
                     TextPrinter.PrintText(DateTime.Now.ToString("[HH:mm] "));
                 }
+                */
             }
 
+            /*
             if(fontSettings.ContainsKey("Notification"))
             {
                 var fontSetting = fontSettings["Notification"];
@@ -263,6 +267,7 @@ namespace Radegast
                 TextPrinter.BackColor = Color.Transparent;
                 TextPrinter.Font = Settings.FontSetting.DefaultFont;
             }
+            */
 
             instance.LogClientMessage(sessionName + ".txt", message);
             TextPrinter.PrintTextLine(message);
@@ -272,6 +277,7 @@ namespace Radegast
         {
             if (ShowTimestamps)
             {
+                /*
                 if(fontSettings.ContainsKey("Timestamp"))
                 {
                     var fontSetting = fontSettings["Timestamp"];
@@ -287,8 +293,10 @@ namespace Radegast
                     TextPrinter.Font = Settings.FontSetting.DefaultFont;
                     TextPrinter.PrintText(DateTime.Now.ToString("[HH:mm] "));
                 }
+                */
             }
 
+            /*
             if(fontSettings.ContainsKey("Name"))
             {
                 var fontSetting = fontSettings["Name"];
@@ -302,6 +310,7 @@ namespace Radegast
                 TextPrinter.BackColor = Color.Transparent;
                 TextPrinter.Font = Settings.FontSetting.DefaultFont;
             }
+            */
 
             if (instance.GlobalSettings["av_name_link"])
             {
@@ -316,6 +325,7 @@ namespace Radegast
 
             if (message.StartsWith("/me "))
             {
+                /*
                 if(fontSettings.ContainsKey("Emote"))
                 {
                     var fontSetting = fontSettings["Emote"];
@@ -329,6 +339,7 @@ namespace Radegast
                     TextPrinter.BackColor = Color.Transparent;
                     TextPrinter.Font = Settings.FontSetting.DefaultFont;
                 }
+                */
 
                 sb.Append(message.Substring(3));
             }
@@ -336,6 +347,7 @@ namespace Radegast
             {
                 if(fromID == instance.Client.Self.AgentID)
                 {
+                    /*
                     if(fontSettings.ContainsKey("OutgoingIM"))
                     {
                         var fontSetting = fontSettings["OutgoingIM"];
@@ -347,11 +359,14 @@ namespace Radegast
                     {
                         TextPrinter.ForeColor = SystemColors.WindowText;
                         TextPrinter.BackColor = Color.Transparent;
-                        TextPrinter.Font = Settings.FontSetting.DefaultFont;
+                        Text
+                        Printer.Font = Settings.FontSetting.DefaultFont;
                     }
+                    */
                 }
                 else
                 {
+                    /*
                     if(fontSettings.ContainsKey("IncomingIM"))
                     {
                         var fontSetting = fontSettings["IncomingIM"];
@@ -365,6 +380,7 @@ namespace Radegast
                         TextPrinter.BackColor = Color.Transparent;
                         TextPrinter.Font = Settings.FontSetting.DefaultFont;
                     }
+                    */
                 }
 
                 sb.Append(": ");
@@ -436,6 +452,7 @@ namespace Radegast
                 string msg = line.Trim();
                 if (!string.IsNullOrEmpty(msg))
                 {
+                    /*
                     if(fontSettings.ContainsKey("History"))
                     {
                         var fontSetting = fontSettings["History"];
@@ -449,10 +466,12 @@ namespace Radegast
                         TextPrinter.BackColor = Color.Transparent;
                         TextPrinter.Font = Settings.FontSetting.DefaultFont;
                     }
+                    */
                     TextPrinter.PrintTextLine(msg);
                 }
             }
 
+            /*
             if(fontSettings.ContainsKey("History"))
             {
                 var fontSetting = fontSettings["History"];
@@ -466,6 +485,7 @@ namespace Radegast
                 TextPrinter.BackColor = Color.Transparent;
                 TextPrinter.Font = Settings.FontSetting.DefaultFont;
             }
+            */
             TextPrinter.PrintTextLine("====");
         }
 

@@ -1106,7 +1106,7 @@ namespace Radegast
             this.cbxItalic.TabIndex = 15;
             this.cbxItalic.Text = "Italic";
             this.cbxItalic.UseVisualStyleBackColor = true;
-            this.cbxItalic.CheckStateChanged += new System.EventHandler(this.cbxItalic_CheckStateChanged);
+            //this.cbxItalic.CheckStateChanged += new System.EventHandler(this.cbxItalic_CheckStateChanged);
             // 
             // label10
             // 
@@ -1135,7 +1135,7 @@ namespace Radegast
             this.cbxBold.TabIndex = 9;
             this.cbxBold.Text = "Bold";
             this.cbxBold.UseVisualStyleBackColor = true;
-            this.cbxBold.CheckStateChanged += new System.EventHandler(this.cbxBold_CheckStateChanged);
+            //this.cbxBold.CheckStateChanged += new System.EventHandler(this.cbxBold_CheckStateChanged);
             // 
             // lbxColorItems
             // 
@@ -1194,7 +1194,7 @@ namespace Radegast
             this.cbxBackground.Size = new System.Drawing.Size(135, 21);
             this.cbxBackground.TabIndex = 3;
             this.cbxBackground.DrawItem += new System.Windows.Forms.DrawItemEventHandler(this.cbxForeground_DrawItem);
-            this.cbxBackground.SelectedIndexChanged += new System.EventHandler(this.SelectedIndexChanged);
+            //this.cbxBackground.SelectedIndexChanged += new System.EventHandler(this.SelectedIndexChanged);
             // 
             // cbxForeground
             // 
@@ -1206,7 +1206,7 @@ namespace Radegast
             this.cbxForeground.Size = new System.Drawing.Size(135, 21);
             this.cbxForeground.TabIndex = 2;
             this.cbxForeground.DrawItem += new System.Windows.Forms.DrawItemEventHandler(this.cbxForeground_DrawItem);
-            this.cbxForeground.SelectedIndexChanged += new System.EventHandler(this.SelectedIndexChanged);
+            //this.cbxForeground.SelectedIndexChanged += new System.EventHandler(this.SelectedIndexChanged);
             // 
             // cbxFontSize
             // 
@@ -1215,7 +1215,7 @@ namespace Radegast
             this.cbxFontSize.Name = "cbxFontSize";
             this.cbxFontSize.Size = new System.Drawing.Size(135, 21);
             this.cbxFontSize.TabIndex = 1;
-            this.cbxFontSize.SelectedIndexChanged += new System.EventHandler(this.SelectedIndexChanged);
+            //this.cbxFontSize.SelectedIndexChanged += new System.EventHandler(this.SelectedIndexChanged);
             // 
             // cbxFont
             // 
@@ -1227,7 +1227,7 @@ namespace Radegast
             this.cbxFont.Size = new System.Drawing.Size(232, 21);
             this.cbxFont.TabIndex = 0;
             this.cbxFont.DrawItem += new System.Windows.Forms.DrawItemEventHandler(this.cbxFont_DrawItem);
-            this.cbxFont.SelectedIndexChanged += new System.EventHandler(this.SelectedIndexChanged);
+            //this.cbxFont.SelectedIndexChanged += new System.EventHandler(this.SelectedIndexChanged);
             // 
             // fontDialog1
             // 

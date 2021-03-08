@@ -339,8 +339,9 @@ namespace Radegast
 
         private void netcom_InstantMessageReceived(object sender, InstantMessageEventArgs e)
         {
+            Console.WriteLine("Netcom IM Received");
             // Messaage from someone we muted?
-            if (null != client.Self.MuteList.Find(me => me.Type == MuteType.Resident && me.ID == e.IM.FromAgentID)) return;
+            //if (null != client.Self.MuteList.Find(me => me.Type == MuteType.Resident && me.ID == e.IM.FromAgentID)) return;
 
             try
             {
@@ -386,7 +387,8 @@ namespace Radegast
                     }
                     else if (e.IM.IMSessionID == UUID.Zero)
                     {
-                        String msg = string.Format("Message from {0}: {1}", instance.Names.Get(e.IM.FromAgentID, e.IM.FromAgentName), e.IM.Message);
+                        String msg = string.Format("Instant Message from {0}: {1}", instance.Names.Get(e.IM.FromAgentID, e.IM.FromAgentName), e.IM.Message);
+                        Console.WriteLine(msg);
                         instance.MainForm.AddNotification(new ntfGeneric(instance, msg));
                         DisplayNotificationInChat(msg);
                     }
@@ -637,6 +639,7 @@ namespace Radegast
 
         private void HandleIM(InstantMessageEventArgs e)
         {
+            Console.WriteLine(e.IM.Message);
             bool isNew = ShowIMTab(e.IM.FromAgentID, e.IM.FromAgentName, false);
             if (!TabExists(e.IM.IMSessionID.ToString())) return; // this should now exist. sanity check anyway
             RadegastTab tab = Tabs[e.IM.IMSessionID.ToString()];
@@ -698,15 +701,15 @@ namespace Radegast
                 ForceCloseTab("login");
             }
 
-            LoginConsole loginConsole = new LoginConsole(instance);
+            ALoginConsole loginConsole = new ALoginConsole(instance);
 
-            RadegastTab tab = AddTab("login", "Login", loginConsole);
-            tab.AllowClose = false;
-            tab.AllowDetach = false;
-            tab.AllowMerge = false;
-            tab.AllowHide = false;
+            //RadegastTab tab = AddTab("login", "Login", loginConsole);
+            //tab.AllowClose = false;
+            //tab.AllowDetach = false;
+            //tab.AllowMerge = false;
+            //tab.AllowHide = false;
 
-            loginConsole.RegisterTab(tab);
+            //loginConsole.RegisterTab(tab);
         }
 
         private void InitializeChatTab()

@@ -19,7 +19,7 @@
  */
 
 using System;
-using System.Windows.Forms;
+//using System.Windows.Forms;
 using OpenMetaverse;
 
 namespace Radegast.Netcom
@@ -291,6 +291,7 @@ namespace Radegast.Netcom
             loginParams.AgreeToTos = AgreeToTos;
             loginParams.URI = Grid.LoginURI;
             loginParams.LastExecEvent = loginOptions.LastExecEvent;
+            Console.WriteLine("NetCom Logging In...");
             client.Network.BeginLogin(loginParams);
         }
 
@@ -371,6 +372,6 @@ namespace Radegast.Netcom
             set => loginOptions = value;
         }
 
-        public Control NetcomSync { get; set; }
+        public System.Windows.Forms.Control NetcomSync { get; set; }
     }
 }

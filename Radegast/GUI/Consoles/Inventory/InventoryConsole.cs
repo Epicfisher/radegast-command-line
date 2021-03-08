@@ -86,7 +86,7 @@ namespace Radegast
             Manager = Client.Inventory;
             Inventory = Manager.Store;
             Inventory.RootFolder.OwnerID = Client.Self.AgentID;
-            invTree.ImageList = frmMain.ResourceImages;
+            //invTree.ImageList = frmMain.ResourceImages;
             invRootNode = AddDir(null, Inventory.RootFolder);
             UpdateStatus("Reading cache");
             Init1();
@@ -2622,8 +2622,8 @@ namespace Radegast
 
             try
             {
-                var icon = frmMain.ResourceImages.Images[iconIx];
-                g.DrawImageUnscaled(icon, e.Bounds.X + offset - 18, e.Bounds.Y);
+                //var icon = frmMain.ResourceImages.Images[iconIx];
+                //g.DrawImageUnscaled(icon, e.Bounds.X + offset - 18, e.Bounds.Y);
             }
             catch { }
 

@@ -21,28 +21,33 @@
 using System;
 using System.Drawing;
 using System.Reflection;
-using System.Windows.Forms;
+using System.Threading;
+using System.Threading.Tasks;
+//using System.Windows.Forms;
 using OpenMetaverse;
 using OpenMetaverse.StructuredData;
 using Radegast.Netcom;
 
 namespace Radegast
 {
-    public partial class LoginConsole : UserControl, IRadegastTabControl
+    //public partial class ALoginConsole : UserControl, IRadegastTabControl
+    public partial class ALoginConsole
     {
         private RadegastInstance instance;
         private RadegastNetcom netcom => instance.Netcom;
 
-        public LoginConsole(RadegastInstance instance)
+        public ALoginConsole(RadegastInstance instance)
         {
-            InitializeComponent();
-            Disposed += new EventHandler(MainConsole_Disposed);
+            Console.WriteLine("Initialising LoginConsole...");
+            //InitializeComponent();
+            
+            //Disposed += new EventHandler(MainConsole_Disposed);
 
             this.instance = instance;
             AddNetcomEvents();
 
-            pnlSplash.BackgroundImage = instance.GlobalSettings["hide_login_graphics"].AsBoolean() 
-                ? null : Properties.Resources.radegast_main_screen2;
+            //pnlSplash.BackgroundImage = instance.GlobalSettings["hide_login_graphics"].AsBoolean() 
+                //? null : Properties.Resources.radegast_main_screen2;
 
             if (!instance.GlobalSettings.ContainsKey("remember_login"))
             {
@@ -51,11 +56,13 @@ namespace Radegast
 
             instance.GlobalSettings.OnSettingChanged += new Settings.SettingChangedCallback(GlobalSettings_OnSettingChanged);
 
-            lblVersion.Text = Properties.Resources.RadegastTitle + " " + Assembly.GetExecutingAssembly().GetName().Version;
+            Console.WriteLine("========== " + Properties.Resources.RadegastTitle + " " + Assembly.GetExecutingAssembly().GetName().Version + " ==========");
+            //lblVersion.Text = Properties.Resources.RadegastTitle + " " + Assembly.GetExecutingAssembly().GetName().Version;
 
-            Load += new EventHandler(LoginConsole_Load);
+            //Load += new EventHandler(LoginConsole_Load);
 
             GUI.GuiHelpers.ApplyGuiFixes(this);
+            Console.WriteLine("Initialised LoginConsole");
         }
 
         private void MainConsole_Disposed(object sender, EventArgs e)
@@ -68,11 +75,11 @@ namespace Radegast
         {
             if (!instance.GlobalSettings["theme_compatibility_mode"] && instance.PlainColors)
             {
-                panel1.BackColor = Color.FromArgb(((int)(((byte)(210)))), ((int)(((byte)(210)))), ((int)(((byte)(225)))));
+                //panel1.BackColor = Color.FromArgb(((int)(((byte)(210)))), ((int)(((byte)(210)))), ((int)(((byte)(225)))));
             }
 
-            cbxLocation.SelectedIndex = 0;
-            cbxUsername.SelectedIndexChanged += cbxUsername_SelectedIndexChanged;
+            //cbxLocation.SelectedIndex = 0;
+            //cbxUsername.SelectedIndexChanged += cbxUsername_SelectedIndexChanged;
             InitializeConfig();
         }
 
@@ -82,6 +89,14 @@ namespace Radegast
             netcom.ClientLoginStatus += new EventHandler<LoginProgressEventArgs>(netcom_ClientLoginStatus);
             netcom.ClientLoggingOut += new EventHandler<OverrideEventArgs>(netcom_ClientLoggingOut);
             netcom.ClientLoggedOut += new EventHandler(netcom_ClientLoggedOut);
+
+            /* Stolen from TabsConsole.cs */
+            netcom.ClientLoginStatus += new EventHandler<LoginProgressEventArgs>(netcom_ClientLoginStatus);
+            netcom.ClientLoggedOut += new EventHandler(netcom_ClientLoggedOut);
+            netcom.ClientDisconnected += new EventHandler<DisconnectedEventArgs>(netcom_ClientDisconnected);
+            netcom.ChatSent += new EventHandler<ChatSentEventArgs>(netcom_ChatSent);
+            netcom.AlertMessageReceived += new EventHandler<AlertMessageEventArgs>(netcom_AlertMessageReceived);
+            netcom.InstantMessageReceived += new EventHandler<InstantMessageEventArgs>(netcom_InstantMessageReceived);
         }
 
         private void RemoveNetcomEvents()
@@ -90,10 +105,107 @@ namespace Radegast
             netcom.ClientLoginStatus -= new EventHandler<LoginProgressEventArgs>(netcom_ClientLoginStatus);
             netcom.ClientLoggingOut -= new EventHandler<OverrideEventArgs>(netcom_ClientLoggingOut);
             netcom.ClientLoggedOut -= new EventHandler(netcom_ClientLoggedOut);
+
+            /* Stolen from TabsConsole.cs */
+            netcom.ClientLoginStatus -= new EventHandler<LoginProgressEventArgs>(netcom_ClientLoginStatus);
+            netcom.ClientLoggedOut -= new EventHandler(netcom_ClientLoggedOut);
+            netcom.ClientDisconnected -= new EventHandler<DisconnectedEventArgs>(netcom_ClientDisconnected);
+            netcom.ChatSent -= new EventHandler<ChatSentEventArgs>(netcom_ChatSent);
+            netcom.AlertMessageReceived -= new EventHandler<AlertMessageEventArgs>(netcom_AlertMessageReceived);
+            netcom.InstantMessageReceived -= new EventHandler<InstantMessageEventArgs>(netcom_InstantMessageReceived);
+        }
+
+        private void netcom_InstantMessageReceived(object sender, InstantMessageEventArgs e)
+        {
+            //Console.WriteLine("Netcom IM Received");
+            // Messaage from someone we muted?
+            //if (null != client.Self.MuteList.Find(me => me.Type == MuteType.Resident && me.ID == e.IM.FromAgentID)) return;
+
+            /*
+            try
+            {
+                if (instance.State.LSLHelper.ProcessIM(e))
+                {
+                    return;
+                }
+            }
+            catch (Exception ex)
+            {
+                Logger.Log("Failed executing automation action: " + ex, Helpers.LogLevel.Warning);
+            }
+            */
+
+            /* Block Group IMs for Now */
+            if(e.IM.GroupIM || instance.Groups.ContainsKey(e.IM.IMSessionID)) { return; }
+
+            /* Bugfix */
+            if(e.IM.Message.Length < 1) { return; }
+
+            if(e.IM.Message == "typing")
+            {
+                //String im_msg = string.Format("{0} is Typing an Instant Message...", instance.Names.Get(e.IM.FromAgentID, e.IM.FromAgentName));
+                //Console.WriteLine(im_msg);
+            }
+            else
+            {
+                String im_msg = string.Format("Instant Message from {0}: {1}", instance.Names.Get(e.IM.FromAgentID, e.IM.FromAgentName), e.IM.Message);
+                Console.WriteLine(im_msg);
+            }
+
+            /*
+            if (e.IM.Dialog == InstantMessageDialog.MessageFromAgent)
+            {
+                if (e.IM.FromAgentName == "Second Life")
+                {
+                    //HandleIMFromObject(e);
+                }
+                else if (e.IM.FromAgentID == UUID.Zero)
+                {
+                    //instance.MainForm.AddNotification(new ntfGeneric(instance, e.IM.Message));
+                }
+                else if (e.IM.GroupIM || instance.Groups.ContainsKey(e.IM.IMSessionID))
+                {
+                   // HandleGroupIM(e);
+                }
+                else if (e.IM.BinaryBucket.Length > 1)
+                { // conference
+                    //HandleConferenceIM(e);
+                }
+                else if (e.IM.IMSessionID == UUID.Zero)
+                {
+                    String msg = string.Format("Instant Message from {0}: {1}", instance.Names.Get(e.IM.FromAgentID, e.IM.FromAgentName), e.IM.Message);
+                    Console.WriteLine(msg);
+                    //instance.MainForm.AddNotification(new ntfGeneric(instance, msg));
+                    //DisplayNotificationInChat(msg);
+                }
+                else
+                {
+                    //HandleIM(e);
+                }
+            }
+            */
+        }
+
+        private void netcom_AlertMessageReceived(object sender, AlertMessageEventArgs e)
+        {
+            //Console.WriteLine("Message Received");
+        }
+
+        private void netcom_ChatSent(object sender, ChatSentEventArgs e)
+        {
+            Console.WriteLine("Chat Sent");
+        }
+
+        private void netcom_ClientDisconnected(object sender, DisconnectedEventArgs e)
+        {
+            //if (e.Reason == NetworkManager.DisconnectType.ClientInitiated) return;
+
+            Console.WriteLine("Client Disconnected");
         }
 
         void GlobalSettings_OnSettingChanged(object sender, SettingsEventArgs e)
         {
+            /*
             if (e.Key == "hide_login_graphics")
             {
                 if (e.Value.AsBoolean())
@@ -101,10 +213,12 @@ namespace Radegast
                 else
                     pnlSplash.BackgroundImage = Properties.Resources.radegast_main_screen2;
             }
+            */
         }
 
         private void SaveConfig()
         {
+            /*
             Settings s = instance.GlobalSettings;
             SavedLogin sl = new SavedLogin();
 
@@ -172,6 +286,7 @@ namespace Radegast
             s["login_grid"] = OSD.FromInteger(cbxGrid.SelectedIndex);
             s["login_uri"] = OSD.FromString(txtCustomLoginUri.Text);
             s["remember_login"] = cbRemember.Checked;
+            */
         }
 
         private void ClearConfig()
@@ -181,9 +296,10 @@ namespace Radegast
             s["password"] = string.Empty;
         }
 
-        private void InitializeConfig()
+        public void InitializeConfig()
         {
             // Initilize grid dropdown
+            /*
             int gridIx = -1;
 
             cbxGrid.Items.Clear();
@@ -303,7 +419,9 @@ namespace Radegast
                 txtCustomLoginUri.Text = MainProgram.s_CommandLineOpts.LoginUri;
                 cbxGrid.SelectedIndex = cbxGrid.Items.Count - 1;
             }
+            */
 
+            Console.WriteLine("Calling BeginLogin...");
             // Start logging in if autologin enabled from command line
             if (MainProgram.s_CommandLineOpts.AutoLogin)
             {
@@ -316,52 +434,88 @@ namespace Radegast
             switch (e.Status)
             {
                 case LoginStatus.ConnectingToLogin:
-                    lblLoginStatus.Text = "Connecting to login server...";
-                    lblLoginStatus.ForeColor = Color.Black;
+                    Console.WriteLine("Connecting to login server...");
+                    //lblLoginStatus.Text = "Connecting to login server...";
+                    //lblLoginStatus.ForeColor = Color.Black;
                     break;
 
                 case LoginStatus.ConnectingToSim:
-                    lblLoginStatus.Text = "Connecting to region...";
-                    lblLoginStatus.ForeColor = Color.Black;
+                    Console.WriteLine("Connecting to region...");
+                    //lblLoginStatus.Text = "Connecting to region...";
+                    //lblLoginStatus.ForeColor = Color.Black;
                     break;
 
                 case LoginStatus.Redirecting:
-                    lblLoginStatus.Text = "Redirecting...";
-                    lblLoginStatus.ForeColor = Color.Black;
+                    Console.WriteLine("Redirecting...");
+                    //lblLoginStatus.Text = "Redirecting...";
+                    //lblLoginStatus.ForeColor = Color.Black;
                     break;
 
                 case LoginStatus.ReadingResponse:
-                    lblLoginStatus.Text = "Reading response...";
-                    lblLoginStatus.ForeColor = Color.Black;
+                    Console.WriteLine("Reading response...");
+                    //lblLoginStatus.Text = "Reading response...";
+                    //lblLoginStatus.ForeColor = Color.Black;
                     break;
 
                 case LoginStatus.Success:
-                    lblLoginStatus.Text = "Logged in as " + netcom.LoginOptions.FullName;
-                    lblLoginStatus.ForeColor = Color.FromArgb(0, 128, 128, 255);
-                    proLogin.Visible = false;
+                    Console.WriteLine("Logged in as " + netcom.LoginOptions.FullName);
+                    //lblLoginStatus.Text = "Logged in as " + netcom.LoginOptions.FullName;
+                    //lblLoginStatus.ForeColor = Color.FromArgb(0, 128, 128, 255);
+                    //proLogin.Visible = false;
 
-                    btnLogin.Text = "Logout";
-                    btnLogin.Enabled = true;
+                    //btnLogin.Text = "Logout";
+                    //btnLogin.Enabled = true;
                     instance.Client.Groups.RequestCurrentGroups();
+
+                    /* Always Faces South, For Bots */
+                    if(MainProgram.s_CommandLineOpts.AlwaysFaceSouth)
+                    {
+                        Console.WriteLine("Always Facing South!");
+                        Thread.Sleep(500);
+                        instance.Client.Self.Movement.BodyRotation = instance.Client.Self.Movement.HeadRotation = new Quaternion(0.00000f, 0.00000f, 0.00000f, 1.00000f); // Face East First
+                        Thread.Sleep(500);
+                        Task.Factory.StartNew(() =>
+                        {
+                            while (true)
+                            {
+                                instance.Client.Self.Movement.BodyRotation = instance.Client.Self.Movement.HeadRotation = new Quaternion(0.00000f, 0.00000f, 0.70711f, -0.70711f);
+                                Thread.Sleep(2000);
+                            }
+                        });
+                    }
+                    /* AutoGroundSit, For Bots */
+                    if(MainProgram.s_CommandLineOpts.AutoGroundSit)
+                    {
+                        Console.WriteLine("AutoGroundSitting...");
+                        Thread.Sleep(5000);
+                        instance.Client.Self.SitOnGround();
+                        Console.WriteLine("AutoGroundSat!");
+                    }
+                    /* */
+
                     break;
 
                 case LoginStatus.Failed:
-                    lblLoginStatus.ForeColor = Color.Red;
+                    //lblLoginStatus.ForeColor = Color.Red;
                     if (e.FailReason == "tos")
                     {
-                        lblLoginStatus.Text = "Must agree to Terms of Service before logging in";
-                        pnlTos.Visible = true;
-                        txtTOS.Text = e.Message.Replace("\n", "\r\n");
-                        btnLogin.Enabled = false;
+                        Console.WriteLine("Must agree to Terms of Service before logging in");
+                        //lblLoginStatus.Text = "Must agree to Terms of Service before logging in";
+                        //pnlTos.Visible = true;
+                        //txtTOS.Text = e.Message.Replace("\n", "\r\n");
+                        //btnLogin.Enabled = false;
                     }
                     else
                     {
-                        lblLoginStatus.Text = e.Message;
-                        btnLogin.Enabled = true;
+                        //lblLoginStatus.Text = e.Message;
+                        //btnLogin.Enabled = true;
                     }
-                    proLogin.Visible = false;
+                    Console.WriteLine("Failed to login for an unknown reason\n!!!Fail Reason:" + e.FailReason + "\n!!!Message:" + e.Message + "\n!!!Status:" + e.Status);
+                    
+                    //proLogin.Visible = false;
 
-                    btnLogin.Text = "Retry";
+                    //btnLogin.Text = "Retry";
+
                     break;
                 case LoginStatus.None:
                 default:
@@ -371,43 +525,48 @@ namespace Radegast
 
         private void netcom_ClientLoggedOut(object sender, EventArgs e)
         {
-            pnlLoginPrompt.Visible = true;
-            pnlLoggingIn.Visible = false;
+            Console.WriteLine("Logged Out");
+            //pnlLoginPrompt.Visible = true;
+            //pnlLoggingIn.Visible = false;
 
-            btnLogin.Text = "Exit";
-            btnLogin.Enabled = true;
+            //btnLogin.Text = "Exit";
+            //btnLogin.Enabled = true;
         }
 
         private void netcom_ClientLoggingOut(object sender, OverrideEventArgs e)
         {
-            btnLogin.Enabled = false;
+            Console.WriteLine("Logging Out...");
+            //btnLogin.Enabled = false;
 
-            lblLoginStatus.Text = "Logging out...";
-            lblLoginStatus.ForeColor = Color.FromKnownColor(KnownColor.ControlText);
+            //lblLoginStatus.Text = "Logging out...";
+            //lblLoginStatus.ForeColor = Color.FromKnownColor(KnownColor.ControlText);
 
-            proLogin.Visible = true;
+            //proLogin.Visible = true;
         }
 
         private void netcom_ClientLoggingIn(object sender, OverrideEventArgs e)
         {
-            lblLoginStatus.Text = "Logging in...";
-            lblLoginStatus.ForeColor = Color.FromKnownColor(KnownColor.ControlText);
+            Console.WriteLine("Logging In...");
+            //lblLoginStatus.Text = "Logging in...";
+            //lblLoginStatus.ForeColor = Color.FromKnownColor(KnownColor.ControlText);
 
-            proLogin.Visible = true;
-            pnlLoggingIn.Visible = true;
-            pnlLoginPrompt.Visible = false;
+            //proLogin.Visible = true;
+            //pnlLoggingIn.Visible = true;
+            //pnlLoginPrompt.Visible = false;
 
-            btnLogin.Enabled = false;
+            //btnLogin.Enabled = false;
         }
 
-        private void BeginLogin()
+        public void BeginLogin()
         {
-            string username = cbxUsername.Text;
+            Console.WriteLine("Beginning Login...");
+            //string username = cbxUsername.Text;
+            string username = MainProgram.s_CommandLineOpts.Username;
 
-            if (cbxUsername.SelectedIndex > 0 && cbxUsername.SelectedItem is SavedLogin login)
-            {
-                username = login.Username;
-            }
+            //if (cbxUsername.SelectedIndex > 0 && cbxUsername.SelectedItem is SavedLogin login)
+            //{
+            //username = login.Username;
+            //}
 
             string[] parts = System.Text.RegularExpressions.Regex.Split(username.Trim(), @"[. ]+");
 
@@ -422,11 +581,15 @@ namespace Radegast
                 netcom.LoginOptions.LastName = "Resident";
             }
 
-            netcom.LoginOptions.Password = txtPassword.Text;
+            //netcom.LoginOptions.Password = txtPassword.Text;
+            netcom.LoginOptions.Password = MainProgram.s_CommandLineOpts.Password;
             netcom.LoginOptions.Channel = Properties.Resources.ProgramName; // Channel
             netcom.LoginOptions.Version = Properties.Resources.RadegastTitle; // Version
-            netcom.AgreeToTos = cbTOS.Checked;
+            //netcom.AgreeToTos = cbTOS.Checked;
+            netcom.AgreeToTos = true;
 
+            netcom.LoginOptions.StartLocation = StartLocationType.Last;
+            /*
             switch (cbxLocation.SelectedIndex)
             {
                 case -1: //Custom
@@ -442,7 +605,12 @@ namespace Radegast
                     netcom.LoginOptions.StartLocation = StartLocationType.Last;
                     break;
             }
+            */
 
+            GridManager gm = new GridManager();
+            gm.LoadGrids();
+            netcom.LoginOptions.Grid = gm.Grids[0];
+            /*
             if (cbxGrid.SelectedIndex == cbxGrid.Items.Count - 1) // custom login uri
             {
                 if (txtCustomLoginUri.TextLength == 0 || txtCustomLoginUri.Text.Trim().Length == 0)
@@ -458,6 +626,9 @@ namespace Radegast
             {
                 netcom.LoginOptions.Grid = cbxGrid.SelectedItem as Grid;
             }
+            */
+            Console.WriteLine("Will Login with Name: " + netcom.loginOptions.FullName);
+            Console.WriteLine("Will Login To URI: " + netcom.LoginOptions.Grid.LoginURI);
 
             if (netcom.LoginOptions.Grid.Platform != "SecondLife")
             {
@@ -471,12 +642,14 @@ namespace Radegast
                 instance.Client.Settings.HTTP_INVENTORY = true;
             }
 
+            Console.WriteLine("Calling netcom.Login()...");
             netcom.Login();
-            SaveConfig();
+            //SaveConfig();
         }
 
         private void btnLogin_Click(object sender, EventArgs e)
         {
+            /*
             switch (btnLogin.Text)
             {
                 case "Login": BeginLogin(); break;
@@ -487,19 +660,21 @@ namespace Radegast
                     btnLogin.Text = "Login";
                     break;
             }
+            */
         }
 
         #region IRadegastTabControl Members
 
         public void RegisterTab(RadegastTab tab)
         {
-            tab.DefaultControlButton = btnLogin;
+            //tab.DefaultControlButton = btnLogin;
         }
 
         #endregion
 
         private void cbxGrid_SelectedIndexChanged(object sender, EventArgs e)
         {
+            /*
             if (cbxGrid.SelectedIndex == cbxGrid.Items.Count - 1) //Custom option is selected
             {
                 txtCustomLoginUri.Enabled = true;
@@ -509,24 +684,28 @@ namespace Radegast
             {
                 txtCustomLoginUri.Enabled = false;
             }
+            */
         }
 
         private void cbTOS_CheckedChanged(object sender, EventArgs e)
         {
-            btnLogin.Enabled = cbTOS.Checked;
+            //btnLogin.Enabled = cbTOS.Checked;
         }
 
         private void cbRemember_CheckedChanged(object sender, EventArgs e)
         {
+            /*
             instance.GlobalSettings["remember_login"] = cbRemember.Checked;
             if (!cbRemember.Checked)
             {
                 ClearConfig();
             }
+            */
         }
 
         private void cbxUsername_SelectedIndexChanged(object sender, EventArgs e)
         {
+            /*
             cbxUsername.SelectedIndexChanged -= cbxUsername_SelectedIndexChanged;
 
             if (cbxUsername.SelectedIndex > 0
@@ -561,6 +740,7 @@ namespace Radegast
             }
 
             cbxUsername.SelectedIndexChanged += cbxUsername_SelectedIndexChanged;
+            */
         }
     }
 

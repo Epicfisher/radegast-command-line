@@ -39,6 +39,7 @@ namespace Radegast
         public delegate void SettingChangedCallback(object sender, SettingsEventArgs e);
         public event SettingChangedCallback OnSettingChanged;
 
+        /*
         public static readonly Dictionary<string, FontSetting> DefaultFontSettings = new Dictionary<string, FontSetting>()
         {
             {"Normal", new FontSetting {
@@ -199,6 +200,7 @@ namespace Radegast
                 return Name;
             }
         }
+        */
 
         public Settings(string fileName)
         {

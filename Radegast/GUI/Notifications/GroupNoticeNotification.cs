@@ -50,7 +50,7 @@ namespace Radegast
                 int icoIndx = InventoryConsole.GetItemImageIndex(type.ToString().ToLower());
                 if (icoIndx >= 0)
                 {
-                    icnItem.Image = frmMain.ResourceImages.Images[icoIndx];
+                    //icnItem.Image = frmMain.ResourceImages.Images[icoIndx];
                     icnItem.Visible = true;
                 }
                 txtItemName.Text = Utils.BytesToString(msg.BinaryBucket, 18, msg.BinaryBucket.Length - 19);

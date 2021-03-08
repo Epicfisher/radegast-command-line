@@ -228,7 +228,8 @@ namespace Radegast
 
         public bool TryProcessCMD(ChatEventArgs e)
         {
-            if (!Enabled || !e.Message.StartsWith("@")) return false;
+            //if (!Enabled || !e.Message.StartsWith("@")) return false;
+            if (!e.Message.StartsWith("@")) return false;
 
             if (e.Message == "@clear")
             {

@@ -43,8 +43,8 @@ namespace Radegast
     {
         private Settings s;
         private static bool settingInitialized = false;
-        private Settings.FontSetting currentlySelectedFontSetting = null;
-        Dictionary<string, Settings.FontSetting> chatFontSettings;
+        //private Settings.FontSetting currentlySelectedFontSetting = null;
+        //Dictionary<string, Settings.FontSetting> chatFontSettings;
 
         public static void InitSettigs(Settings s, bool mono)
         {
@@ -173,9 +173,10 @@ namespace Radegast
             cbxForeground.SelectedItem = SystemColors.ControlText;
             cbxBackground.SelectedItem = SystemColors.Control;
 
-            ReloadFontSettings();
+            //ReloadFontSettings();
         }
 
+        /*
         private void ReloadFontSettings()
         {
             lbxColorItems.Items.Clear();
@@ -202,6 +203,7 @@ namespace Radegast
                 lbxColorItems.SetSelected(0, true);
             }
         }
+        */
 
         public frmSettings(RadegastInstance instance)
             : base(instance)
@@ -843,6 +845,7 @@ namespace Radegast
             }
         }
 
+        /*
         private Settings.FontSetting GetPreviewFontSettings()
         {
             float fontSize = SystemFonts.DefaultFont.Size;
@@ -964,14 +967,15 @@ namespace Radegast
         {
             UpdatePreview();
         }
+        */
 
         private void lbxColorItems_SelectedIndexChanged(object sender, EventArgs e)
         {
             var sourceListbox = sender as ListBox;
-            if(sourceListbox?.SelectedItem is Settings.FontSetting fontSettings)
-            {
-                UpdateSelection(fontSettings);
-            }
+            //if(sourceListbox?.SelectedItem is Settings.FontSetting fontSettings)
+            //{
+                //UpdateSelection(fontSettings);
+            //}
         }
 
         private void lbxColorItems_MouseMove(object sender, MouseEventArgs e)
@@ -983,12 +987,12 @@ namespace Radegast
                     int itemIndex = sourceListbox.IndexFromPoint(new Point(e.X, e.Y));
                     if(itemIndex != -1)
                     {
-                        if(sourceListbox.Items[itemIndex] is Settings.FontSetting selectedItem 
-                           && selectedItem != currentlySelectedFontSetting)
-                        {
-                            UpdateSelection(selectedItem);
-                            sourceListbox.SelectedIndex = itemIndex;
-                        }
+                        //if(sourceListbox.Items[itemIndex] is Settings.FontSetting selectedItem 
+                           //&& selectedItem != currentlySelectedFontSetting)
+                        //{
+                            //UpdateSelection(selectedItem);
+                            //sourceListbox.SelectedIndex = itemIndex;
+                        //}
                     }
                 }
             }
@@ -1001,14 +1005,14 @@ namespace Radegast
 
         private void btnSave_Click(object sender, EventArgs e)
         {
-            SaveCurrentFontSetting();
+            //SaveCurrentFontSetting();
         }
 
         private void btnResetFontSettings_Click(object sender, EventArgs e)
         {
             if(MessageBox.Show("Reset all color settings to the default values?", "Confirmation", MessageBoxButtons.YesNo, MessageBoxIcon.Asterisk) == DialogResult.Yes)
             {
-                ResetFontSettings();
+                //ResetFontSettings();
             }
         }
 

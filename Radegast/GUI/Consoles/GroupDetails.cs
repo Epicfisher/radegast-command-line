@@ -93,7 +93,7 @@ namespace Radegast
                 RefreshBans();
             }
 
-            lvwNoticeArchive.SmallImageList = frmMain.ResourceImages;
+            //lvwNoticeArchive.SmallImageList = frmMain.ResourceImages;
             lvwNoticeArchive.ListViewItemSorter = new GroupNoticeSorter();
 
             // Callbacks
@@ -224,7 +224,7 @@ namespace Radegast
                 int icoIndx = InventoryConsole.GetItemImageIndex(type.ToString().ToLower());
                 if (icoIndx >= 0)
                 {
-                    icnItem.Image = frmMain.ResourceImages.Images[icoIndx];
+                    //icnItem.Image = frmMain.ResourceImages.Images[icoIndx];
                     icnItem.Visible = true;
                 }
                 txtItemName.Text = Utils.BytesToString(msg.BinaryBucket, 18, msg.BinaryBucket.Length - 19);
@@ -1121,7 +1121,7 @@ namespace Radegast
                 int icoIndx = InventoryConsole.GetItemImageIndex(inv.AssetType.ToString().ToLower());
                 if (icoIndx >= 0)
                 {
-                    icnNewNoticeAtt.Image = frmMain.ResourceImages.Images[icoIndx];
+                    //icnNewNoticeAtt.Image = frmMain.ResourceImages.Images[icoIndx];
                     icnNewNoticeAtt.Visible = true;
                 }
                 txtNewNoteAtt.Tag = inv;

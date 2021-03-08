@@ -229,6 +229,8 @@ namespace Radegast
 
         public RadegastInstance(GridClient client0)
         {
+            Console.WriteLine("Initialising Radegast Instance...");
+
             // incase something else calls GlobalInstance while we are loading
             globalInstance = this;
 
@@ -248,7 +250,7 @@ namespace Radegast
             MonoRuntime = Type.GetType("Mono.Runtime") != null;
 
             Keyboard = new Keyboard();
-            Application.AddMessageFilter(Keyboard);
+            //Application.AddMessageFilter(Keyboard);
 
             Netcom = new RadegastNetcom(this);
             State = new StateManager(this);
@@ -268,11 +270,18 @@ namespace Radegast
             Names = new NameManager(this);
             COF = new CurrentOutfitFolder(this);
 
-            MainForm = new frmMain(this);
-            MainForm.InitializeControls();
+            //MainForm = new frmMain(this);
+            //MainForm.InitializeControls();
 
-            MainForm.Load += new EventHandler(mainForm_Load);
+            //MainForm.Load += new EventHandler(mainForm_Load);
             PluginManager = new PluginManager(this);
+
+            Console.WriteLine("Creating LoginConsole...");
+            ALoginConsole lc = new ALoginConsole(this);
+            //lc.BeginLogin();
+            Console.WriteLine("Calling LoginConsole InitialiseConfig...");
+            lc.InitializeConfig();
+            Console.WriteLine("Ready!");
         }
 
         private void InitializeClient(GridClient client)
@@ -385,10 +394,9 @@ namespace Radegast
             return now;
         }
 
-
         public void Reconnect()
         {
-            TabConsole.DisplayNotificationInChat("Attempting to reconnect...", ChatBufferTextStyle.StatusDarkBlue);
+            //TabConsole.DisplayNotificationInChat("Attempting to reconnect...", ChatBufferTextStyle.StatusDarkBlue);
             Logger.Log("Attemting to reconnect", Helpers.LogLevel.Info, Client);
             GridClient oldClient = Client;
             Client = new GridClient();
@@ -509,7 +517,6 @@ namespace Radegast
             }
         }
 
-
         /// <summary>
         /// Fetches avatar name
         /// </summary>
@@ -592,7 +599,7 @@ namespace Radegast
         public GridClient Client { get; private set; }
         public RadegastNetcom Netcom { get; private set; }
         public StateManager State { get; private set; }
-        public frmMain MainForm { get; }
+        public frmMain MainForm { get; set; }
         public TabsConsole TabConsole => MainForm.TabConsole;
 
         public void HandleThreadException(object sender, ThreadExceptionEventArgs e)
@@ -670,6 +677,24 @@ namespace Radegast
                 File.Delete(CrashMarkerFileName);
             }
             catch { }
+
+            if (GlobalSettings["auto_reconnect"].AsBoolean())
+            {
+                (new Thread(new ThreadStart(() =>
+                {
+                    Console.WriteLine("Reconnecting in 3 Seconds...");
+                    Thread.Sleep(3000);
+                    //instance.Reconnect();
+                    Reconnect();
+                    Console.WriteLine("Reconnecting...");
+                }
+                        ))
+                {
+                    Name = "Reconnect Delay Thread",
+                    IsBackground = true
+                }
+                ).Start();
+            }
         }
 
         #endregion Crash reporting
@@ -689,7 +714,7 @@ namespace Radegast
 
         void ExportDAEHander(object sender, EventArgs e)
         {
-            MainForm.DisplayColladaConsole((Primitive)sender);
+            //MainForm.DisplayColladaConsole((Primitive)sender);
         }
 
         void CopyObjectUUIDHandler(object sender, EventArgs e)

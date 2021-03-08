@@ -43,7 +43,7 @@ namespace Radegast
 
         private bool showTimestamps;
 
-        public static Dictionary<string, Settings.FontSetting> fontSettings = new Dictionary<string, Settings.FontSetting>();
+        //public static Dictionary<string, Settings.FontSetting> fontSettings = new Dictionary<string, Settings.FontSetting>();
 
         public ChatTextManager(RadegastInstance instance, ITextPrinter textPrinter)
         {
@@ -75,6 +75,7 @@ namespace Radegast
             {
                 s["chat_timestamps"] = OSD.FromBoolean(true);
             }
+            /*
             if (s["chat_fonts"].Type == OSDType.Unknown)
             {
                 try
@@ -95,6 +96,7 @@ namespace Radegast
             {
                 System.Windows.Forms.MessageBox.Show("Failed to read chat font settings: " + ex.Message);
             }
+            */
 
             showTimestamps = s["chat_timestamps"].AsBoolean();
 
@@ -113,7 +115,7 @@ namespace Radegast
                 try
                 {
                     var serializer = new JavaScriptSerializer();
-                    fontSettings = serializer.Deserialize<Dictionary<string, Settings.FontSetting>>(e.Value);
+                    //fontSettings = serializer.Deserialize<Dictionary<string, Settings.FontSetting>>(e.Value);
                 }
                 catch (Exception ex)
                 {
@@ -173,23 +175,26 @@ namespace Radegast
 
                 if (showTimestamps)
                 {
+                    /*
                     if(fontSettings.ContainsKey("Timestamp"))
                     {
-                        var fontSetting = fontSettings["Timestamp"];
-                        TextPrinter.ForeColor = fontSetting.ForeColor;
-                        TextPrinter.BackColor = fontSetting.BackColor;
-                        TextPrinter.Font = fontSetting.Font;
+                        //var fontSetting = fontSettings["Timestamp"];
+                        //TextPrinter.ForeColor = fontSetting.ForeColor;
+                        //TextPrinter.BackColor = fontSetting.BackColor;
+                        //TextPrinter.Font = fontSetting.Font;
                         TextPrinter.PrintText(item.Timestamp.ToString("[HH:mm] "));
                     }
                     else
                     {
                         TextPrinter.ForeColor = SystemColors.GrayText;
                         TextPrinter.BackColor = Color.Transparent;
-                        TextPrinter.Font = Settings.FontSetting.DefaultFont;
+                        //TextPrinter.Font = Settings.FontSetting.DefaultFont;
                         TextPrinter.PrintText(item.Timestamp.ToString("[HH:mm] "));
                     }
+                    */
                 }
 
+                /*
                 if(fontSettings.ContainsKey("Name"))
                 {
                     var fontSetting = fontSettings["Name"];
@@ -201,8 +206,9 @@ namespace Radegast
                 {
                     TextPrinter.ForeColor = SystemColors.WindowText;
                     TextPrinter.BackColor = Color.Transparent;
-                    TextPrinter.Font = Settings.FontSetting.DefaultFont;
+                    //TextPrinter.Font = Settings.FontSetting.DefaultFont;
                 }
+                */
 
                 if (item.Style == ChatBufferTextStyle.Normal && item.ID != UUID.Zero && instance.GlobalSettings["av_name_link"])
                 {
@@ -213,6 +219,7 @@ namespace Radegast
                     TextPrinter.PrintText(item.From);
                 }
 
+                /*
                 if(fontSettings.ContainsKey(item.Style.ToString()))
                 {
                     var fontSetting = fontSettings[item.Style.ToString()];
@@ -224,8 +231,9 @@ namespace Radegast
                 {
                     TextPrinter.ForeColor = SystemColors.WindowText;
                     TextPrinter.BackColor = Color.Transparent;
-                    TextPrinter.Font = Settings.FontSetting.DefaultFont;
+                    //TextPrinter.Font = Settings.FontSetting.DefaultFont;
                 }
+                */
                 TextPrinter.PrintTextLine(item.Text);
             }
         }

@@ -24,6 +24,7 @@ using System.IO;
 using System.Reflection;
 using CommandLine;
 using CommandLine.Text;
+using System.Text;
 #if (COGBOT_LIBOMV || USE_STHREADS)
 using ThreadPoolUtil;
 using Thread = ThreadPoolUtil.Thread;
@@ -34,6 +35,35 @@ using System.Threading;
 
 namespace Radegast
 {
+    public class ConsoleWriterEventArgs : EventArgs
+    {
+        public string Value { get; private set; }
+        public ConsoleWriterEventArgs(string value)
+        {
+            Value = value;
+        }
+    }
+
+    public class ConsoleWriter : TextWriter
+    {
+        public override Encoding Encoding { get { return Encoding.UTF8; } }
+
+        public override void Write(string value)
+        {
+            if (WriteEvent != null) WriteEvent(this, new ConsoleWriterEventArgs(value));
+            base.Write(value);
+        }
+
+        public override void WriteLine(string value)
+        {
+            if (WriteLineEvent != null) WriteLineEvent(this, new ConsoleWriterEventArgs(value));
+            base.WriteLine(value);
+        }
+
+        public event EventHandler<ConsoleWriterEventArgs> WriteEvent;
+        public event EventHandler<ConsoleWriterEventArgs> WriteLineEvent;
+    }
+
     public class CommandLineOptions
     {
         [Option('u', "username", HelpText = "Username, use quotes to supply \"First Last\"")]
@@ -60,6 +90,26 @@ namespace Radegast
         [Option("no-sound", HelpText = "Disable sound")]
         public bool DisableSound { get; set; } = false;
 
+        //
+
+        [Option("ignore-warn", HelpText = "Ignores Warning Messages")]
+        public bool IgnoreWarn { get; set; } = false;
+
+        //
+
+        [Option("disable-lookat", HelpText = "Disable LookAt")]
+        public bool DisableLookAt { get; set; } = false;
+
+        [Option("auto-reconnect", HelpText = "Enable Auto Reconnect")]
+        public bool AutoReConnect { get; set; } = false;
+
+        //
+
+        [Option("south", HelpText = "Face south")]
+        public bool AlwaysFaceSouth { get; set; } = false;
+
+        [Option("autogroundsit", HelpText = "Automatically GroundSit on Login")]
+        public bool AutoGroundSit { get; set; } = false;
 
         public HelpText GetHeader()
         {
@@ -75,13 +125,71 @@ namespace Radegast
 
     public static class MainProgram
     {
+        public static ConsoleWriter newOut = new ConsoleWriter();
+        public static TextWriter oldOut = Console.Out;
+
+        public static string builtString = "";
+
         /// <summary>
         /// Parsed command line options
         /// </summary>
         public static CommandLineOptions s_CommandLineOpts;
 
+        static void consoleWriter_WriteLineEvent(object sender, ConsoleWriterEventArgs e)
+        {
+            if(builtString != "")
+            {
+                if (!(builtString.Contains("WARN") && s_CommandLineOpts.IgnoreWarn))
+                {
+                    Console.SetOut(oldOut);
+                    Console.Write(builtString);
+                    Console.SetOut(newOut);
+                }
+                if (!builtString.EndsWith("\n")) { Console.Write("\n"); }
+                builtString = "";
+            }
+
+            /* Linux Double-WriteLine Bug Workaround, Why does this Happen? IDK */
+            bool mono = Type.GetType("Mono.Runtime") != null;
+            if(!mono)
+            {
+                Console.SetOut(oldOut);
+                Console.WriteLine(e.Value);
+                Console.SetOut(newOut);
+            }
+        }
+
+        static void consoleWriter_WriteEvent(object sender, ConsoleWriterEventArgs e)
+        {
+            //Console.SetOut(oldOut);
+            //Console.Write(e.Value);
+            //Console.SetOut(newOut);
+
+            /* Slightly Messy but it'll get the job done*/
+            builtString += e.Value;
+            if (e.Value.EndsWith("\n"))
+            {
+                if (!(builtString.Contains("WARN") && s_CommandLineOpts.IgnoreWarn))
+                {
+                    Console.SetOut(oldOut);
+                    Console.Write(builtString);
+                    Console.SetOut(newOut);
+                }
+                builtString = "";
+            }
+        }
+
         static void RunRadegast(CommandLineOptions args)
         {
+            newOut.WriteEvent += consoleWriter_WriteEvent;
+            newOut.WriteLineEvent += consoleWriter_WriteLineEvent;
+            Console.SetOut(newOut);
+
+            //Console.SetOut(TextWriter.Null);
+
+            // **
+
+            Console.WriteLine("Running Radegast...");
             s_CommandLineOpts = args;
             AppDomain.CurrentDomain.UnhandledException += CurrentDomain_UnhandledException;
 
@@ -100,8 +208,8 @@ namespace Radegast
             Directory.SetCurrentDirectory(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) 
                                           ?? throw new InvalidOperationException());
 
-            Application.EnableVisualStyles();
-            Application.SetCompatibleTextRenderingDefault(false);
+            //Application.EnableVisualStyles();
+            //Application.SetCompatibleTextRenderingDefault(false);
 
             // See if we only wanted to display list of grids
             if (s_CommandLineOpts.ListGrids)
@@ -122,12 +230,30 @@ namespace Radegast
             }
 
             // Create main Radegast instance
+            Console.WriteLine("Creating Radegast Instance...");
             RadegastInstance instance = RadegastInstance.GlobalInstance;
-            Application.Run(instance.MainForm);
+
+            if (s_CommandLineOpts.DisableLookAt)
+            {
+                Console.WriteLine("Disabling LookAt...");
+                instance.GlobalSettings["disable_look_at"] = true; // Disable LookAt
+            }
+            if (s_CommandLineOpts.AutoReConnect)
+            {
+                Console.WriteLine("Enabling Auto Reconnect...");
+                instance.GlobalSettings["auto_reconnect"] = true; // Enable Auto Reconnect
+            }
+
+            Console.WriteLine("Running MainForm...");
+            while (true) { Thread.Sleep(2000); }
+            //Application.Run(instance.MainForm);
+            //instance.MainForm = new frmMain(instance);
+            //frmMain mf = instance.MainForm;
         }
 
         private static void CurrentDomain_UnhandledException(object sender, UnhandledExceptionEventArgs e)
         {
+            Console.WriteLine("Unhandled Exception - Logging Out...");
             var instance = RadegastInstance.GlobalInstance;
             instance.Client.Network.Logout();
         }
@@ -169,16 +295,18 @@ namespace Radegast
                 string dlgMsg = "Radegast has encountered an unrecoverable error." + Environment.NewLine +
                                 "Would you like to send the error report to help improve Radegast?";
 
-                var res = MessageBox.Show(dlgMsg, @"Unrecoverable error", 
-                    MessageBoxButtons.YesNo, MessageBoxIcon.Error, MessageBoxDefaultButton.Button1);
+                //var res = MessageBox.Show(dlgMsg, @"Unrecoverable error", 
+                //MessageBoxButtons.YesNo, MessageBoxIcon.Error, MessageBoxDefaultButton.Button1);
+                Console.WriteLine("===\n" + dlgMsg + "\n===");
+                Console.WriteLine("Radegast Unrecoverable Error");
 
-                if (res == DialogResult.Yes)
-                {
-                    var reporter = new ErrorReporter("http://api.radegast.org/svc/error_report");
-                    reporter.SendExceptionReport(e);
-                }
+                //if (res == DialogResult.Yes)
+                //{
+                    //var reporter = new ErrorReporter("http://api.radegast.org/svc/error_report");
+                    //reporter.SendExceptionReport(e);
+                //}
 
-                Environment.Exit(1);
+                //Environment.Exit(1);
             }
         }
     }

@@ -32,6 +32,7 @@ namespace Radegast
 {
     partial class frmMain
     {
+        /*
         /// <summary>
         /// Required designer variable.
         /// </summary>
@@ -1080,6 +1081,7 @@ namespace Radegast
         private System.Windows.Forms.ToolStripMenuItem adultToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem uploadmeshToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem setHoverHeightToolStripMenuItem;
+        */
     }
 }
 

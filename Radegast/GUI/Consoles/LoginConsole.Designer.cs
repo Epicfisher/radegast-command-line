@@ -32,6 +32,7 @@ namespace Radegast
 {
     partial class LoginConsole
     {
+        /*
         /// <summary> 
         /// Required designer variable.
         /// </summary>
@@ -376,6 +377,6 @@ namespace Radegast
         public System.Windows.Forms.CheckBox cbTOS;
         public System.Windows.Forms.Label lblVersion;
         public System.Windows.Forms.CheckBox cbRemember;
-
+        */
     }
 }

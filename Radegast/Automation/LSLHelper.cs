@@ -86,12 +86,12 @@ namespace Radegast.Automation
         /// <returns>If message processed correctly, should GUI processing be halted</returns>
         public bool ProcessIM(InstantMessageEventArgs e)
         {
-            LoadSettings();
+            Console.WriteLine("Processing IM...");
+            return true;
+            
+            //LoadSettings();
 
-            if (!Enabled)
-            {
-                return false;
-            }
+            //if (!Enabled) { return false; }
 
             switch (e.IM.Dialog)
             {

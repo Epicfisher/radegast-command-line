@@ -130,7 +130,7 @@ namespace Radegast
 
                         if (ix != -1)
                         {
-                            titem.Image = frmMain.ResourceImages.Images[ix];
+                            //titem.Image = frmMain.ResourceImages.Images[ix];
                             titem.DisplayStyle = ToolStripItemDisplayStyle.ImageAndText;
                         }
                         else

@@ -69,8 +69,8 @@ namespace Radegast
 
             PrimSorter = new ObjectSorter(client.Self);
 
-            lstContents.LargeImageList = frmMain.ResourceImages;
-            lstContents.SmallImageList = frmMain.ResourceImages;
+            //lstContents.LargeImageList = frmMain.ResourceImages;
+            //lstContents.SmallImageList = frmMain.ResourceImages;
 
             filter = (ObjectConsoleFilter)instance.GlobalSettings["object_console_filter"].AsInteger();
             comboFilter.SelectedIndex = 0;
@@ -1111,7 +1111,7 @@ namespace Radegast
                 if (CurrentPrim.Properties.CreatorID == client.Self.AgentID &&
                     CurrentPrim.Properties.OwnerID == client.Self.AgentID)
                 {
-                    ctxMenuObjects.Items.Add("Export", null, btnExport_Click);
+                    //ctxMenuObjects.Items.Add("Export", null, btnExport_Click);
                 }
             }
 
@@ -1194,10 +1194,10 @@ namespace Radegast
             lstContents.Focus();
         }
 
-        private void btnExport_Click(object sender, EventArgs e)
-        {
-            instance.MainForm.DisplayExportConsole(CurrentPrim.LocalID);
-        }
+        //private void btnExport_Click(object sender, EventArgs e)
+        //{
+            //instance.MainForm.DisplayExportConsole(CurrentPrim.LocalID);
+        //}
 
         private void lstContents_MouseDoubleClick(object sender, MouseEventArgs e)
         {

@@ -55,10 +55,10 @@ The Program can be Started through the Command-line with the following Arguments
 Additional Optional Command-line Arguments:
 
 ```
---ignore-warn = Ignores Warning Messages.
+--ignore-warn = Ignores Warning Messages
 
---disable-lookat = Disables Lookat.
---auto-reconnect = Enables Auto Reconnect.
+--disable-lookat = Disables Lookat
+--auto-reconnect = Enables Auto Reconnect
 
 --south = Always Face South. Can be Useful for Bots
 --autogroundsit = Automatically GroundSit on Login
